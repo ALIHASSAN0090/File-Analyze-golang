@@ -18,7 +18,12 @@ func Stats(g *gin.Context) {
 
 	routines, err := strconv.Atoi(routinesStr)
 	if err != nil {
-		g.JSON(400, gin.H{"error": "Invalid number of routines"})
+		g.JSON(400, gin.H{"error": "You entered Aphabet. please enter a number between 1 and 4 "})
+		return
+	}
+
+	if routines > 4 || routines < 1 {
+		g.JSON(400, gin.H{"error": "Number of routines must be between 1 and 4"})
 		return
 	}
 
