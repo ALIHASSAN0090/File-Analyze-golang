@@ -9,26 +9,21 @@ import (
 )
 
 func DeleteRecords(g *gin.Context) {
+	idStr := g.Query("id")
 
-	idstr := g.PostForm("id")
-
-	id, err := strconv.Atoi(idstr)
+	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		g.JSON(http.StatusBadRequest, gin.H{"error": "Invalid value"})
-
 		return
 	}
 
-	query := `DELETE FROM file_stats WHERE id = $1`
-
+	query := "DELETE FROM file_stats WHERE id = $1"
 	_, err = DbConn.Exec(query, id)
 	if err != nil {
 		fmt.Println("error ", err)
-		g.JSON(http.StatusInternalServerError, gin.H{"error": "Error updating record"})
-
+		g.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting record"})
 		return
 	}
 
 	g.JSON(http.StatusOK, gin.H{"message": "Record deleted successfully"})
-
 }

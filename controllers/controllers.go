@@ -92,6 +92,8 @@ func Stats(g *gin.Context) {
 	fmt.Println("Analysis results inserted successfully")
 }
 
+//test file for stats :
+
 func DisplayAll(g *gin.Context) {
 
 	rows, err := db.DbConn.Query("SELECT * FROM file_stats")
