@@ -8,10 +8,21 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// DeleteRecords godoc
+// @Summary Delete a file statistics record
+// @Description Delete a file statistics record by ID.
+// @Accept  multipart/form-data
+// @Produce json
+// @Param id formData int true "ID of the record to delete"
+// @Success 200 {object} map[string]string "Record deleted successfully"
+// @Failure 400 {object} map[string]string "Invalid ID"
+// @Failure 500 {object} map[string]string "Error deleting record"
+// @Router /delete [Delete]
 func DeleteRecords(g *gin.Context) {
-	idStr := g.Query("id")
+	idStr := g.PostForm("id")
 
 	id, err := strconv.Atoi(idStr)
+	fmt.Print(id)
 	if err != nil {
 		g.JSON(http.StatusBadRequest, gin.H{"error": "Invalid value"})
 		return

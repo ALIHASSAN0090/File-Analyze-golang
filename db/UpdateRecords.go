@@ -8,6 +8,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// UpdateRecord godoc
+// @Summary Update a file statistics record
+// @Description Update the vowel count of a file statistics record by ID.
+// @Accept  multipart/form-data
+// @Produce json
+// @Param id formData int true "ID of the record to update"
+// @Param value formData int true "New vowel count"
+// @Success 200 {object} map[string]string "Record updated successfully"
+// @Failure 400 {object} map[string]string "Invalid ID or value"
+// @Failure 500 {object} map[string]string "Error updating record"
+// @Router / [put]
 func UpdateRecord(g *gin.Context) {
 	idStr := g.PostForm("id")
 	valueStr := g.PostForm("value")

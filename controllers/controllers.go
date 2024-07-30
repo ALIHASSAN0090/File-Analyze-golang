@@ -13,10 +13,21 @@ import (
 	"main.go/utils"
 )
 
-func Stats(g *gin.Context) {
+// Stats godoc
+// @Summary Analyze text file content
+// @Description Analyze the text file to count vowels, capital letters, small letters, and spaces.
+// @Accept  multipart/form-data
+// @Produce json
+// @Param routines formData int true "Number of routines (1 to 4)"
+// @Success 200 {object} map[string]interface{} "Analysis results"
+// @Failure 400 {object} map[string]string "Invalid input or number of routines out of range"
+// @Failure 500 {object} map[string]string "Error opening file or inserting analysis results"
+// @Router /stats [post]
+func stats(g *gin.Context) {
 	routinesStr := g.PostForm("routines")
 
 	routines, err := strconv.Atoi(routinesStr)
+	fmt.Println(routines)
 	if err != nil {
 		g.JSON(400, gin.H{"error": "You entered Aphabet. please enter a number between 1 and 4 "})
 		return
@@ -83,6 +94,7 @@ func Stats(g *gin.Context) {
 	}
 
 	g.JSON(200, gin.H{
+
 		"total_vowels":   totalCounts["vowels"],
 		"total_capitals": totalCounts["capital"],
 		"total_small":    totalCounts["small"],
@@ -92,8 +104,13 @@ func Stats(g *gin.Context) {
 	fmt.Println("Analysis results inserted successfully")
 }
 
-//test file for stats :
-
+// DisplayAll godoc
+// @Summary Display all file analysis statistics
+// @Description Retrieve all records of file analysis statistics from the database.
+// @Produce  json
+// @Success 200 {array} db.FileStats "List of file statistics"
+// @Failure 500 {object} map[string]string "Error fetching or processing data"
+// @Router / [get]
 func DisplayAll(g *gin.Context) {
 
 	rows, err := db.DbConn.Query("SELECT * FROM file_stats")

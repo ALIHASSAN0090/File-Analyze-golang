@@ -1,0 +1,163 @@
+basePath: /
+definitions:
+  db.FileStats:
+    properties:
+      capital:
+        type: integer
+      id:
+        type: integer
+      small:
+        type: integer
+      spaces:
+        type: integer
+      vowels:
+        type: integer
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: A app that analyzes the contents of a text file.
+  title: File Analyzer in golang
+paths:
+  /:
+    get:
+      description: Retrieve all records of file analysis statistics from the database.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of file statistics
+          schema:
+            items:
+              $ref: '#/definitions/db.FileStats'
+            type: array
+        "500":
+          description: Error fetching or processing data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Display all file analysis statistics
+    put:
+      consumes:
+      - multipart/form-data
+      description: Update the vowel count of a file statistics record by ID.
+      parameters:
+      - description: ID of the record to update
+        in: formData
+        name: id
+        required: true
+        type: integer
+      - description: New vowel count
+        in: formData
+        name: value
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Record updated successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid ID or value
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Error updating record
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a file statistics record
+  /create-table:
+    post:
+      description: Create the file_stats table if it does not exist.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Created Table successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Error Creating table
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create the file statistics table
+  /delete:
+    delete:
+      consumes:
+      - multipart/form-data
+      description: Delete a file statistics record by ID.
+      parameters:
+      - description: ID of the record to delete
+        in: formData
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Record deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Error deleting record
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a file statistics record
+  /stats:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Analyze the text file to count vowels, capital letters, small letters,
+        and spaces.
+      parameters:
+      - description: Number of routines (1 to 4)
+        in: formData
+        name: routines
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Analysis results
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid input or number of routines out of range
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Error opening file or inserting analysis results
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Analyze text file content
+swagger: "2.0"

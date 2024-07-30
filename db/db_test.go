@@ -8,7 +8,7 @@ import (
 )
 
 func TestConnectDB_Success(t *testing.T) {
-	err := ConnectDB()
+	DbConn, err := Connect()
 	defer DbConn.Close()
 	assert.NoError(t, err, "Expected no error when connecting to the database")
 

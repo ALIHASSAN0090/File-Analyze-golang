@@ -3,16 +3,12 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"os"
+	"time"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
-)
-
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "postgres"
-	password = "password123"
-	dbname   = "postgres"
 )
 
 type FileStats struct {
@@ -25,20 +21,42 @@ type FileStats struct {
 
 var DbConn *sql.DB
 
-func ConnectDB() error {
-	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-
+func Connect() (*sql.DB, error) {
 	var err error
-	DbConn, err = sql.Open("postgres", psqlconn)
+
+	// Load environment variables from .env file
+	err = godotenv.Load(".env")
 	if err != nil {
-		return fmt.Errorf("error opening database: %v", err)
+		log.Fatalf("Error loading .env file: %s", err)
 	}
 
-	err = DbConn.Ping()
-	if err != nil {
-		return fmt.Errorf("error connecting to the database: %v", err)
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbUser := os.Getenv("DB_USER")
+	dbName := os.Getenv("DB_NAME")
+	dbPassword := os.Getenv("DB_PASSWORD")
+
+	if dbHost == "" || dbPort == "" || dbUser == "" || dbName == "" || dbPassword == "" {
+		return nil, fmt.Errorf("missing one or more required environment variables")
 	}
 
-	fmt.Println("Connected to the database!")
-	return nil
+	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		dbHost, dbPort, dbUser, dbPassword, dbName)
+
+	for i := 0; i < 3; i++ {
+		DbConn, err = sql.Open("postgres", psqlInfo)
+		if err == nil {
+			err = DbConn.Ping()
+			if err == nil {
+				break
+			}
+		}
+		fmt.Printf("Failed to connect to the database. Retrying... (%d/10)\n", i+1)
+		time.Sleep(5 * time.Second)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect to the database: %v", err)
+	}
+
+	return DbConn, nil
 }
