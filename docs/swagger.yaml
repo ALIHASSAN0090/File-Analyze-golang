@@ -139,6 +139,11 @@ paths:
         name: routines
         required: true
         type: integer
+      - description: Text file to analyze
+        in: formData
+        name: file
+        required: true
+        type: file
       produces:
       - application/json
       responses:

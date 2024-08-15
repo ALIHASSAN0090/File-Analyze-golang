@@ -1,0 +1,163 @@
+Dockerfile.postgres : FROM postgres:latest
+ENV DB_USER=postgres
+ENV DB_PASSWORD=password123
+ENV DB_NAME=postgres
+
+.postgres-configmap.yaml :apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+data:
+  postgresql.conf: |
+    wal_level = replica
+    max_wal_senders = 5
+    wal_keep_size = 16MB
+    # Additional settings as needed
+  pg_hba.conf: |
+    host    replication     replicator      0.0.0.0/0      md5
+postgres-primary-deployment.yaml:apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-primary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+      role: primary
+  template:
+    metadata:
+      labels:
+        app: postgres
+        role: primary
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:latest
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+        - name: postgres-config
+          mountPath: /etc/postgresql/postgresql.conf
+          subPath: postgresql.conf
+        - name: postgres-config
+          mountPath: /etc/postgresql/pg_hba.conf
+          subPath: pg_hba.conf
+        env:
+        - name: POSTGRES_PASSWORD
+          value: "password123"
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: postgres-data-postgres-0
+      - name: postgres-config
+        configMap:
+          name: postgres-config
+.postgres-pvc.yaml:apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+.postgres-replica-deployment.yaml:apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-replica
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+      role: replica
+  template:
+    metadata:
+      labels:
+        app: postgres
+        role: replica
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:latest
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+        - name: postgres-config
+          mountPath: /etc/postgresql/replica_postgresql.conf
+          subPath: postgresql.conf
+        - name: postgres-config
+          mountPath: /etc/postgresql/replica_pg_hba.conf
+          subPath: pg_hba.conf
+        env:
+        - name: POSTGRES_PASSWORD
+          value: "password123"
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: postgres-data-postgres-1
+      - name: postgres-config
+        configMap:
+          name: postgres-config
+.postgres-serviceCluster.yaml:apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: postgres
+.postgres-statefulset.yaml:apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+  serviceName: "postgres"
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: alihassan0010/postgres1:latest
+        env:
+        - name: POSTGRES_DB
+          value: "postgres"
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: POSTGRES_PASSWORD
+          value: "password123"
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+.postgres-survice.yaml: apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  ports:
+  - port: 5432
+    name: postgres
+  # clusterIP: None
+  selector:
+    app: postgres

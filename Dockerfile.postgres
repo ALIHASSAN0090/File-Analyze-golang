@@ -1,0 +1,5 @@
+FROM postgres:latest
+ENV DB_USER=postgres
+ENV DB_PASSWORD=password123
+ENV DB_NAME=postgres
+

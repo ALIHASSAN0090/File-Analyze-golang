@@ -1,9 +1,8 @@
 package controllers
 
 import (
-	"fmt"
+	"io"
 	"net/http"
-	"os"
 	"strconv"
 	"sync"
 	"time"
@@ -13,40 +12,50 @@ import (
 	"main.go/utils"
 )
 
+func Test(c *gin.Context) {
+	c.JSON(200, gin.H{"working": "route is working"})
+
+}
+
 // Stats godoc
 // @Summary Analyze text file content
 // @Description Analyze the text file to count vowels, capital letters, small letters, and spaces.
 // @Accept  multipart/form-data
 // @Produce json
 // @Param routines formData int true "Number of routines (1 to 4)"
+// @Param file formData file true "Text file to analyze"
 // @Success 200 {object} map[string]interface{} "Analysis results"
 // @Failure 400 {object} map[string]string "Invalid input or number of routines out of range"
 // @Failure 500 {object} map[string]string "Error opening file or inserting analysis results"
 // @Router /stats [post]
-func stats(g *gin.Context) {
-	routinesStr := g.PostForm("routines")
+func stats(c *gin.Context) {
 
+	routinesStr := c.PostForm("routines")
 	routines, err := strconv.Atoi(routinesStr)
-	fmt.Println(routines)
 	if err != nil {
-		g.JSON(400, gin.H{"error": "You entered Aphabet. please enter a number between 1 and 4 "})
+		c.JSON(400, gin.H{"error": "Please enter a number between 1 and 4"})
 		return
 	}
 
-	if routines > 4 || routines < 1 {
-		g.JSON(400, gin.H{"error": "Number of routines must be between 1 and 4"})
+	if routines < 1 || routines > 4 {
+		c.JSON(400, gin.H{"error": "Number of routines must be between 1 and 4"})
 		return
 	}
 
-	filePath := "src/test.txt"
-	fileContent, err := os.ReadFile(filePath)
+	file, _, err := c.Request.FormFile("file")
 	if err != nil {
-		g.JSON(500, gin.H{"error": "Error opening file"})
+		c.JSON(500, gin.H{"error": "Error opening file"})
+		return
+	}
+	defer file.Close()
+
+	fileContent, err := io.ReadAll(file)
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Error reading file"})
 		return
 	}
 
 	text := string(fileContent)
-
 	chunk := len(text) / routines
 	var wg sync.WaitGroup
 	results := make(chan map[string]int, routines)
@@ -79,29 +88,24 @@ func stats(g *gin.Context) {
 			totalCounts[key] += value
 		}
 	}
+
 	endTime := time.Now()
 	processTime := endTime.Sub(startTime)
 	milliSec := processTime.Milliseconds()
-	//
-
-	fmt.Println(totalCounts["vowels"], totalCounts["capital"], totalCounts["small"], totalCounts["spaces"])
 
 	err = db.CreateUser(totalCounts["vowels"], totalCounts["capital"], totalCounts["small"], totalCounts["spaces"])
 	if err != nil {
-		fmt.Printf("Error inserting analysis results: %v\n", err)
-		g.JSON(500, gin.H{"error": "Error inserting analysis results"})
+		c.JSON(500, gin.H{"error": "Error inserting analysis results"})
 		return
 	}
 
-	g.JSON(200, gin.H{
-
+	c.JSON(200, gin.H{
 		"total_vowels":   totalCounts["vowels"],
 		"total_capitals": totalCounts["capital"],
 		"total_small":    totalCounts["small"],
 		"total_spaces":   totalCounts["spaces"],
 		"process_time":   milliSec,
 	})
-	fmt.Println("Analysis results inserted successfully")
 }
 
 // DisplayAll godoc

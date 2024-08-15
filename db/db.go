@@ -51,7 +51,7 @@ func Connect() (*sql.DB, error) {
 				break
 			}
 		}
-		fmt.Printf("Failed to connect to the database. Retrying... (%d/10)\n", i+1)
+		fmt.Printf("Failed to connect to the database. Retrying... (%d/3)\n", i+1)
 		time.Sleep(5 * time.Second)
 	}
 	if err != nil {

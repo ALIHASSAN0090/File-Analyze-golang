@@ -8,6 +8,7 @@ import (
 func Routes(r *gin.Engine) {
 
 	r.GET("/", DisplayAll)
+	r.GET("/test", Test)
 	r.POST("/stats", stats)
 	r.PUT("/", db.UpdateRecord)
 	r.DELETE("/delete", db.DeleteRecords)

@@ -195,6 +195,13 @@ const docTemplate = `{
                         "name": "routines",
                         "in": "formData",
                         "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Text file to analyze",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
