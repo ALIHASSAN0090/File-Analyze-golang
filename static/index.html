@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Analyzer</title>
-    <link rel="stylesheet" href="styles/index.css">
+    <link rel="stylesheet" href="static/styles/index.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
 </head>
 <body>
     <nav class="navbar">
 
         <div class="left">
-             <h1>File Analyzer</h1>
+             <a href="./index.html"><h1>File Analyzer</h1></a>
         </div>
         <div class="right">
             <ul class="list">
@@ -37,33 +37,33 @@
     </nav>
     <div>
         <div class="form-container">
-            <form action="#" method="post">
+            <form id="analyzeForm" method="post" enctype="multipart/form-data">
                 <div class="file-input-container">
-                    <input type="file" id="file" class="file-input">
-                    <label for="file" class="file-input-label animated-button">Choose a file</label>
+                    <input type="file" id="file" name="file" class="file-input">
+                    <label for="file" class="file-input-label">Choose a file</label>
                 </div>
-            </form>
-        </div>
-        <div class="form-container">
-            <form action="#" method="post">
-                <input type="text" name="name" placeholder="Enter Number of go routines">
+                <input type="text" name="routines" placeholder="Enter Number of go routines">
                 <button type="submit" class="animated-button">Submit</button>
             </form>
         </div>
-        <table border="1">
-            <tr>
-                <th>Column 1</th>
-                <th>Column 2</th>
-                <th>Column 3</th>
-                <th>Column 4</th>
-            </tr>
-            <tr>
-                <td>Row 1, Cell 1</td>
-                <td>Row 1, Cell 2</td>
-                <td>Row 1, Cell 3</td>
-                <td>Row 1, Cell 4</td>
-            </tr>
+        
+        
+        <table id="resultsTable" border="1">
+            <thead>
+                <tr>
+                    <th>Vowels</th>
+                    <th>Capitals</th>
+                    <th>Small</th>
+                    <th>Spaces</th>
+                    <th>Process Time (ms)</th>
+                </tr>
+                
+            </thead>
+            <tbody>
+                
+            </tbody>
         </table>
     </div>
+    <script src="static/js/index.js"></script>
 </body>
 </html>

@@ -4,45 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Analyzer</title>
-    <link rel="stylesheet" href="styles/index.css">
+    <link rel="stylesheet" href="static/styles/index.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
 </head>
 <body>
     <nav class="navbar">
-
         <div class="left">
             <a href="index.html"> <h1>File Analyzer</h1></a>
         </div>
         <div class="right">
             <ul class="list">
-               
-                <li>
-                    <a href="./test.html">Test</a>
-                </li>
-                <li>
-                    <a href="./getAll.html">Get All</a>
-                </li>
-                <li>
-                    <a href="./UpdateRecord.html">Update Record</a>
-                </li>
-                <li>
-                    <a href="./deleteRecord.html">Delete Record</a>
-                </li>
-                <li>
-                    <a href="#">Create Table</a>
-                </li>
+                <li><a href="./test.html">Test</a></li>
+                <li><a href="./getAll.html">Get All</a></li>
+                <li><a href="./UpdateRecord.html">Update Record</a></li>
+                <li><a href="./deleteRecord.html">Delete Record</a></li>
+                <li><a href="#">Create Table</a></li>
              </ul>
         </div>
-            
-
     </nav>
     <div class="form-container">
-        <form action="#" method="post">
-            <input type="text" name="input1" placeholder="Enter ID Number" class="text-input">
-            <input type="text" name="input2" placeholder="Enter Value to update" class="text-input">
+        <form id="updateForm">
+            <input type="text" name="id" placeholder="Enter ID Number" class="text-input">
+            <input type="text" name="value" placeholder="Enter Value to update" class="text-input">
             <button type="submit" class="animated-button">Submit</button>
         </form>
     </div>
+
     
 </body>
 </html>

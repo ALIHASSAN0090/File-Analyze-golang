@@ -12,11 +12,6 @@ import (
 	"main.go/utils"
 )
 
-func Test(c *gin.Context) {
-	c.JSON(200, gin.H{"working": "route is working"})
-
-}
-
 // Stats godoc
 // @Summary Analyze text file content
 // @Description Analyze the text file to count vowels, capital letters, small letters, and spaces.
@@ -29,7 +24,6 @@ func Test(c *gin.Context) {
 // @Failure 500 {object} map[string]string "Error opening file or inserting analysis results"
 // @Router /stats [post]
 func stats(c *gin.Context) {
-
 	routinesStr := c.PostForm("routines")
 	routines, err := strconv.Atoi(routinesStr)
 	if err != nil {
@@ -115,30 +109,28 @@ func stats(c *gin.Context) {
 // @Success 200 {array} db.FileStats "List of file statistics"
 // @Failure 500 {object} map[string]string "Error fetching or processing data"
 // @Router / [get]
-func DisplayAll(g *gin.Context) {
-
+func DisplayAll(c *gin.Context) {
 	rows, err := db.DbConn.Query("SELECT * FROM file_stats")
 	if err != nil {
-		g.JSON(http.StatusInternalServerError, gin.H{"error": "Error fetching data"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error fetching data"})
 		return
 	}
 	defer rows.Close()
 
 	var results []db.FileStats
-
 	for rows.Next() {
 		var stat db.FileStats
 		if err := rows.Scan(&stat.ID, &stat.Vowels, &stat.Capital, &stat.Small, &stat.Spaces); err != nil {
-			g.JSON(http.StatusInternalServerError, gin.H{"error": "Error processing data"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error processing data"})
 			return
 		}
 		results = append(results, stat)
 	}
 
 	if err := rows.Err(); err != nil {
-		g.JSON(http.StatusInternalServerError, gin.H{"error": "Error completing query"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error completing query"})
 		return
 	}
 
-	g.JSON(http.StatusOK, results)
+	c.JSON(http.StatusOK, results)
 }
