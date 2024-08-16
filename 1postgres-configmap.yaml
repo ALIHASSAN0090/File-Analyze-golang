@@ -4,9 +4,14 @@ metadata:
   name: postgres-config
 data:
   postgresql.conf: |
-    wal_level = replica
-    max_wal_senders = 5
+   # Enable replication
+   wal_level = replica
+   max_wal_senders = 5
+   max_replication_slots = 5
+   archive_mode = on
+   archive_command = 'cp %p /var/lib/postgresql/archive/%f'
+
     wal_keep_size = 16MB
-    # Additional settings as needed
+    primary_conninfo = 'host=postgres-primary port=5432 user=replicator password=password123'
   pg_hba.conf: |
     host    replication     replicator      0.0.0.0/0      md5

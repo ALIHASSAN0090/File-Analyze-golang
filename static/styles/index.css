@@ -1,0 +1,260 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&family=Ubuntu:wght@300;700&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: #ffffff;
+    font-family: 'Ubuntu', sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+}
+
+.navbar {
+    background:#28a745;
+    display: flex;
+    justify-content: space-between; /* Aligns left and right elements */
+    align-items: center;
+    padding: 0 20px;
+    line-height: 5rem; /* Height of every line in the div */
+}
+
+.left h1 {
+    font-size: 2.5rem;
+    cursor: pointer;
+    color: #ffffff;
+}
+
+.checkBtn {
+    display: none;
+}
+
+.checkBtn {
+    cursor: pointer;
+    font-size: 30px;
+    float: right;
+    color: #ffffff;
+    line-height: 80px;
+}
+
+@media screen and (max-width: 805px) {
+    .list {
+        width: 100%;
+        height: 100vh;
+        background-color: rgb(22, 7, 36);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 4rem;
+        left: 100%;
+        transition: all 1s;
+    }
+
+    .checkBtn {
+        display: block;
+    }
+}
+
+.form-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+input[type="text"] {
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.animated-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.animated-button:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+.animated-button:active {
+    transform: scale(0.95);
+}
+
+.file-input-container {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+}
+
+.file-input {
+    width: 100%;
+    height: 45px;
+    opacity: 0;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+p{
+    color: black;
+    align-items: center;
+}
+
+.file-input-label {
+    display: block;
+    background-color: #28a745;
+    color: #fff;
+    padding: 10px 20px;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.file-input-label:hover {
+    background-color: #30c250;
+    transform: scale(1.05);
+}
+
+.file-input-label:active {
+    transform: scale(0.95);
+}
+.file-input-label:hover {
+    transform: scale(0.95);
+    
+}
+.table-container {
+    padding: 20px 40px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+    color: rgb(56, 56, 56);
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+
+
+.navbar{
+   
+    display: flex;
+    justify-content: space-around; /*it expands the items in right and left*/
+    align-items: center;
+    line-height: 5rem; /*height of every line in the div*/
+
+}
+
+.left h1{
+    font-size: 2.5rem;
+    cursor: pointer; /* it makes cursur on the selected text*/
+   
+
+}
+
+.checkBtn {
+    display: none; /*it hides the element*/
+    
+
+}
+
+#check{
+    display: none;
+}
+
+.checkBtn{
+    cursor: pointer;
+    font-size: 30px;
+    float: right; /*The element floats the right of its container	
+    */
+   
+    line-height: 80px;
+}
+.list li a{
+    text-decoration: none;
+}
+
+.list li a:hover{
+   
+    transition: 0.5s;
+}
+.fa:hover{
+   
+    transition: 0.5s;
+}
+
+.right ul{
+    display: flex; /*it moves items in rows*/
+    list-style: none;
+}
+.right ul li{
+padding: 10px 20px;
+font-size: 1.2rem;
+color: white;
+cursor: pointer;
+text-decoration: none;
+transition: all 1s; /*all property will get a transition effect */   
+}
+
+.right ul li:hover{
+   
+    border-radius: 7px;
+}
+
+@media screen and (max-width: 805px) {
+    .list{
+        width: 100%;
+        height: 100vh;
+        
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 4rem;
+        left: 100%;
+        transition: all 1s;
+    }
+    #check{
+        display: none;
+    }
+    .checkBtn{
+        display: block;
+    }
+    #check:checked~ul {
+        left: 0%;
+    }
+}
