@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: goapp
-        image: alihassan0010/goapp1:latest
+        image: muhammadhaseem/file_go:latest
         ports:
         - containerPort: 3000
         env:

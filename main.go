@@ -23,6 +23,8 @@ func main() {
 
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders: []string{"Origin", "Authorization", "Content-Type"},
 	}))
 
 	_, err := db.Connect()

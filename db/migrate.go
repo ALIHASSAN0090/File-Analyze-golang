@@ -14,7 +14,7 @@ import (
 // @Failure 500 {object} map[string]string "Error Creating table"
 // @Router /create-table [post]
 func Createtable(g *gin.Context) {
-	query := `CREATE TABLE IF NOT EXISTS file_stats (
+	queryFile := `CREATE TABLE IF NOT EXISTS file_stats (
         id SERIAL PRIMARY KEY,
         vowels INT,
         capital INT,
@@ -22,11 +22,31 @@ func Createtable(g *gin.Context) {
         spaces INT
     )`
 
-	_, err := DbConn.Exec(query)
+	_, err := DbConn.Exec(queryFile)
 	if err != nil {
-		g.JSON(http.StatusInternalServerError, gin.H{"error": "Error Creating table"})
+		g.JSON(http.StatusInternalServerError, gin.H{"error": "Error Creating table for File Stats"})
 		return
 	}
 
-	g.JSON(http.StatusOK, gin.H{"error": "Created Table succesfully"})
+	g.JSON(http.StatusOK, gin.H{"Success": "Created Table succesfully for File Stats"})
+}
+
+func CreateTableUser(g *gin.Context) {
+	// Define the SQL query with corrected data types and no trailing comma
+	queryUser := `CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        password VARCHAR(255) NOT NULL
+    )`
+
+	// Execute the SQL query
+	_, err := DbConn.Exec(queryUser)
+	if err != nil {
+		// Respond with an error if the query fails
+		g.JSON(http.StatusInternalServerError, gin.H{"error": "Error Creating table for Users"})
+		return
+	}
+
+	// Respond with success if the query succeeds
+	g.JSON(http.StatusOK, gin.H{"Success": "Created Table successfully for Users"})
 }

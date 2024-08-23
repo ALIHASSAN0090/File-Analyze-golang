@@ -12,3 +12,14 @@ func CreateUser(vowels, capital, small, spaces int) error {
 
 	return nil
 }
+
+func CreateUserData(name, password string) error {
+
+	_, err := DbConn.Exec("INSERT INTO users (name,password) VALUES ($1, $2)", name, password)
+	if err != nil {
+		if err != nil {
+			return fmt.Errorf("error inserting user into database: %v", err)
+		}
+	}
+	return nil
+}

@@ -24,16 +24,22 @@ func UpdateRecord(g *gin.Context) {
 		Value int `json:"value"`
 	}
 
+	// Log the incoming request
+	fmt.Println("Incoming Request Body:", g.Request.Body)
+
 	if err := g.ShouldBindJSON(&updateData); err != nil {
+		fmt.Println("Binding Error:", err) // Log binding errors
 		g.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
 		return
 	}
+
+	fmt.Println("Update Data:", updateData) // Log the data being used in the query
 
 	sqlStatement := `UPDATE file_stats SET vowels = $1 WHERE id = $2`
 
 	_, err := DbConn.Exec(sqlStatement, updateData.Value, updateData.ID)
 	if err != nil {
-		fmt.Println("error ", err)
+		fmt.Println("Database Error:", err) // Log database errors
 		g.JSON(http.StatusInternalServerError, gin.H{"error": "Error updating record"})
 		return
 	}

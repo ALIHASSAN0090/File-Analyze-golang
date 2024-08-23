@@ -9,38 +9,35 @@
 </head>
 <body>
     <nav class="navbar">
-
         <div class="left">
-            <a href="index.html"> <h1>File Analyzer</h1></a>
-        </div>
-        <div class="right">
-            <ul class="list">
-                
-                <li>
-                    <a href="./test.html">Test</a>
-                </li>
-                <li>
-                    <a href="./getAll.html">Get All</a>
-                </li>
-                <li>
-                    <a href="./UpdateRecord.html">Update Record</a>
-                </li>
-                <li>
-                    <a href="./deleteRecord.html">Delete Record</a>
-                </li>
-                <li>
-                    <a href="#">Create Table</a>
-                </li>
-             </ul>
-        </div>
-            
-
+            <h1>File Analyzer</h1>
+         </div>
+         <div class="right">
+             <ul class="list">
+                 <li>
+                     <a href="./index.html">Home</a>
+                 </li>
+                 <li>
+                     <a href="./getAll.html">Get All</a>
+                 </li>
+                 <li>
+                     <a href="./UpdateRecord.html">Update Record</a>
+                 </li>
+                 <li>
+                     <a href="./deleteRecord.html">Delete Record</a>
+                 </li>
+                 <li>
+                     <a href="#">Create Table</a>
+                 </li>
+              </ul>
+         </div>
     </nav>
     <div class="form-container">
-        <form action="#" method="delete">
-            <input type="text" name="name" placeholder="Enter Id Number to delete!">
+        <form id="deleteForm">
+            <input type="text" name="id" class="tabtext" placeholder="Enter Id Number to delete!">
             <button type="submit" class="animated-button">Delete</button>
         </form>
     </div>
+    <script src="static/js/delete.js"></script>
 </body>
 </html>

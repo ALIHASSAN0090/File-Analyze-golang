@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"main.go/db"
+	"main.go/middleware"
 	"main.go/utils"
 )
 
@@ -24,6 +26,7 @@ import (
 // @Failure 500 {object} map[string]string "Error opening file or inserting analysis results"
 // @Router /stats [post]
 func stats(c *gin.Context) {
+	// Get number of routines from form data
 	routinesStr := c.PostForm("routines")
 	routines, err := strconv.Atoi(routinesStr)
 	if err != nil {
@@ -36,6 +39,7 @@ func stats(c *gin.Context) {
 		return
 	}
 
+	// Retrieve and read the file from form data
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Error opening file"})
@@ -62,6 +66,7 @@ func stats(c *gin.Context) {
 
 	startTime := time.Now()
 
+	// Process the text in parallel
 	for i := 0; i < routines; i++ {
 		startId := i * chunk
 		endId := startId + chunk
@@ -77,6 +82,7 @@ func stats(c *gin.Context) {
 		close(results)
 	}()
 
+	// Aggregate the results
 	for count := range results {
 		for key, value := range count {
 			totalCounts[key] += value
@@ -87,6 +93,7 @@ func stats(c *gin.Context) {
 	processTime := endTime.Sub(startTime)
 	milliSec := processTime.Milliseconds()
 
+	// Store results in the database
 	err = db.CreateUser(totalCounts["vowels"], totalCounts["capital"], totalCounts["small"], totalCounts["spaces"])
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Error inserting analysis results"})
@@ -100,6 +107,8 @@ func stats(c *gin.Context) {
 		"total_spaces":   totalCounts["spaces"],
 		"process_time":   milliSec,
 	})
+	fmt.Println("Total counts:", totalCounts)
+
 }
 
 // DisplayAll godoc
@@ -108,7 +117,7 @@ func stats(c *gin.Context) {
 // @Produce  json
 // @Success 200 {array} db.FileStats "List of file statistics"
 // @Failure 500 {object} map[string]string "Error fetching or processing data"
-// @Router / [get]
+// @Router /display [get]
 func DisplayAll(c *gin.Context) {
 	rows, err := db.DbConn.Query("SELECT * FROM file_stats")
 	if err != nil {
@@ -133,4 +142,55 @@ func DisplayAll(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, results)
+}
+
+func Signup(c *gin.Context) {
+	name := c.PostForm("Name")
+	password := c.PostForm("Password")
+
+	if name == "" && password == "" {
+		c.JSON(http.StatusNoContent, gin.H{"Error": "One or More Fields are Empty"})
+	}
+
+	err := db.CreateUserData(name, password)
+	if err == nil {
+		c.JSON(http.StatusOK, gin.H{"Success": "Added User in Database Successfully"})
+	}
+
+}
+func Login(c *gin.Context) {
+	name := c.PostForm("Name")
+	password := c.PostForm("Password")
+
+	if name == "" || password == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"Error": "One or More Fields are Empty"})
+		return
+	}
+
+	// Fetch user from the database
+	user, err := db.GetUserByName(name)
+	if err != nil {
+		fmt.Println("Error fetching user:", err) // Debug statement
+		c.JSON(http.StatusUnauthorized, gin.H{"Error": "User not found"})
+		return
+	}
+
+	// Check if the password matches
+	if user.Password != password {
+		c.JSON(http.StatusUnauthorized, gin.H{"Error": "Invalid credentials"})
+		return
+	}
+
+	// Generate JWT token
+	token, err := middleware.GenerateToken(name)
+	if err != nil {
+		fmt.Println("Error generating token:", err) // Debug statement
+		c.JSON(http.StatusInternalServerError, gin.H{"Error": "Could not generate token"})
+		return
+	}
+
+	fmt.Println("Generated Token for user:", name, "Token:", token) // Debug statement
+
+	// Send token in the response
+	c.JSON(http.StatusOK, gin.H{"token": token})
 }
