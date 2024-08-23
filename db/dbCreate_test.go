@@ -21,7 +21,7 @@ func TestInsertValue_Success(t *testing.T) {
 		WithArgs(3, 5, 7, 2).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	err = CreateUser(3, 5, 7, 2)
+	err = CreateUser(3, 5, 7, 2, 2)
 
 	assert.NoError(t, err, "CreateUser should not return an error")
 
@@ -43,7 +43,7 @@ func TestInsertValue_Failure(t *testing.T) {
 	mock.ExpectExec("INSERT INTO file_stats").
 		WillReturnError(fmt.Errorf("error inserting into database"))
 
-	err = CreateUser(3, 5, 7, 2)
+	err = CreateUser(3, 5, 7, 2, 2)
 
 	assert.Error(t, err, "CreateUser should return an error")
 

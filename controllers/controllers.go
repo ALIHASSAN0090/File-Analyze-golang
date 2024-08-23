@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"main.go/db"
 	"main.go/middleware"
+
 	"main.go/utils"
 )
 
@@ -25,7 +26,15 @@ import (
 // @Failure 400 {object} map[string]string "Invalid input or number of routines out of range"
 // @Failure 500 {object} map[string]string "Error opening file or inserting analysis results"
 // @Router /stats [post]
+
 func stats(c *gin.Context) {
+	// Retrieve user ID from context
+	id, exists := c.Get("userID")
+	if !exists {
+		c.JSON(500, gin.H{"error": "User ID not found"})
+		return
+	}
+
 	// Get number of routines from form data
 	routinesStr := c.PostForm("routines")
 	routines, err := strconv.Atoi(routinesStr)
@@ -93,9 +102,15 @@ func stats(c *gin.Context) {
 	processTime := endTime.Sub(startTime)
 	milliSec := processTime.Milliseconds()
 
+	fmt.Println(id.(int), totalCounts["vowels"], totalCounts["capital"], totalCounts["small"], totalCounts["spaces"])
+	val := id.(int)
+	if val == 0 {
+		fmt.Printf("invalid user id: %d", val)
+	}
 	// Store results in the database
-	err = db.CreateUser(totalCounts["vowels"], totalCounts["capital"], totalCounts["small"], totalCounts["spaces"])
+	err = db.CreateUser(id.(int), totalCounts["vowels"], totalCounts["capital"], totalCounts["small"], totalCounts["spaces"])
 	if err != nil {
+		fmt.Println("Error inserting analysis results:", err) // Debug statement
 		c.JSON(500, gin.H{"error": "Error inserting analysis results"})
 		return
 	}
@@ -108,7 +123,6 @@ func stats(c *gin.Context) {
 		"process_time":   milliSec,
 	})
 	fmt.Println("Total counts:", totalCounts)
-
 }
 
 // DisplayAll godoc
@@ -119,7 +133,13 @@ func stats(c *gin.Context) {
 // @Failure 500 {object} map[string]string "Error fetching or processing data"
 // @Router /display [get]
 func DisplayAll(c *gin.Context) {
-	rows, err := db.DbConn.Query("SELECT * FROM file_stats")
+	id, exists := c.Keys["userID"].(int)
+	if !exists {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "User ID not found"})
+		return
+	}
+
+	rows, err := db.DbConn.Query("SELECT * FROM file_stats WHERE user_id = $1", id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error fetching data"})
 		return
@@ -182,14 +202,14 @@ func Login(c *gin.Context) {
 	}
 
 	// Generate JWT token
-	token, err := middleware.GenerateToken(name)
+	token, err := middleware.GenerateToken(user.ID, name)
 	if err != nil {
 		fmt.Println("Error generating token:", err) // Debug statement
 		c.JSON(http.StatusInternalServerError, gin.H{"Error": "Could not generate token"})
 		return
 	}
 
-	fmt.Println("Generated Token for user:", name, "Token:", token) // Debug statement
+	fmt.Println("Generated Token for user:", name, "Token:", token, "user id ", user.ID) // Debug statement
 
 	// Send token in the response
 	c.JSON(http.StatusOK, gin.H{"token": token})

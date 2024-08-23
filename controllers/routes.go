@@ -19,7 +19,7 @@ func Routes(r *gin.Engine) {
 
 	// Protected routes
 	protected := r.Group("/")
-	protected.Use(middleware.TokenAuthMiddleware())
+	protected.Use(middleware.AuthMiddleware())
 
 	// Serve protected static files
 	protected.GET("/home", func(c *gin.Context) {
@@ -39,7 +39,7 @@ func Routes(r *gin.Engine) {
 		c.File("./static/createTable.html")
 	})
 
-	r.POST("/stats", stats)
+	protected.POST("/stats", stats)
 	r.GET("/display", DisplayAll)
 
 	r.PUT("/update", db.UpdateRecord)

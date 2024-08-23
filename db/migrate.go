@@ -19,7 +19,8 @@ func Createtable(g *gin.Context) {
         vowels INT,
         capital INT,
         small INT,
-        spaces INT
+        spaces INT,
+		user_id INT
     )`
 
 	_, err := DbConn.Exec(queryFile)
